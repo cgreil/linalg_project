@@ -116,7 +116,7 @@ mod tests {
     }
     
     #[test]
-    fn addition_check() {
+    fn addition_test() {
         let test_num1 = Complex {
             real: 1.0,
             imaginary: 2.0,
@@ -135,7 +135,7 @@ mod tests {
     }
 
     #[test]
-    fn subtraction_check() {
+    fn subtraction_test() {
         let test_num1 = Complex {
             real: 2.0,
             imaginary: -3.0
@@ -152,6 +152,72 @@ mod tests {
         assert_approx_eq!(actual.real, expected.real, delta);
         assert_approx_eq!(actual.imaginary, expected.imaginary, delta);
     }
+
+    #[test]
+    fn multiplication_test() {
+        let test_num1 = Complex {
+            real: 2.0,
+            imaginary: 3.0,
+        };
+        let test_num2 = Complex {
+            real: 3.0,
+            imaginary: 1.0,
+
+        };
+        let actual = complex::Complex::multiplication(test_num1, test_num2);
+        let expected = Complex {
+            real:  3.0,
+            imaginary: 11.0, 
+        };
+        assert_approx_eq!(actual.real, expected.real, delta);
+        assert_approx_eq!(actual.imaginary, expected.imaginary, delta);
+    }
+
+    #[test]
+    fn division_test() {
+        let test_num1 = Complex {
+            real: 2.0,
+            imaginary: 3.0,
+        };
+        let test_num2 = Complex {
+            real: -4.0,
+            imaginary: 7.0,
+        };
+        let actual = complex::Complex::division(test_num1, test_num2);
+        let expected = Complex {
+            real:   13.0,
+            imaginary: 2.0,
+        };
+        assert_approx_eq!(actual.real, expected.real, delta);
+        assert_approx_eq!(actual.imaginary, expected.imaginary, delta);
+    }
+
+    #[test]
+    fn adjoint_test() {
+        let test_num = Complex {
+            real: 4.0,
+            imaginary: -9.0
+        };
+        let actual = complex::Complex::adjoint(test_num);
+        let expected = Complex {
+            real: 4.0,
+            imaginary: 9.0
+        };
+        assert_approx_eq!(actual.real, expected.real, delta);
+        assert_approx_eq!(actual.imaginary, expected.imaginary, delta);
+    }
+
+    #[test]
+    fn norm_test() {
+        let test_num = Complex {
+            real: 4.0,
+            imaginary: -5.0
+        };
+        let actual = complex::Complex::norm(test_num);
+        let expected: f32 = 6.4031242f32;
+        assert_approx_eq!(actual, expected, delta);
+    }
+
 }
 
 
