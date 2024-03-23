@@ -46,7 +46,7 @@ mod complex {
     impl ComplexArithmetic for Complex {
 
        fn norm(number: Complex) -> f32 {
-            f32::powi(number.real,2) + f32::powi(number.imaginary, 2)
+            f32::sqrt(f32::powi(number.real, 2) + f32::powi(number.imaginary, 2))
        }
 
        fn adjoint(number: Complex) -> Complex {
@@ -78,7 +78,15 @@ mod complex {
        }
 
        fn division (number1: Complex, number2: Complex) -> Complex {
-           Complex::multiplication(number1, Complex::adjoint(number2))
+           let real_numerator = number1.real * number2.real + number1.imaginary * number2.imaginary;
+           let complex_numerator = number1.imaginary * number2.real - number1.real * number2.imaginary;
+
+           let denominator = number2.real * number2.real + number2.imaginary * number2.imaginary;
+
+           Complex {
+               real: real_numerator / denominator,
+               imaginary: complex_numerator / denominator,
+           }
        }
     }
 }
@@ -176,17 +184,17 @@ mod tests {
     #[test]
     fn division_test() {
         let test_num1 = Complex {
+            real: 4.0, 
+            imaginary: 5.0, 
+        };
+        let test_num2 = Complex {
             real: 2.0,
             imaginary: 3.0,
         };
-        let test_num2 = Complex {
-            real: -4.0,
-            imaginary: 7.0,
-        };
         let actual = complex::Complex::division(test_num1, test_num2);
         let expected = Complex {
-            real:   13.0,
-            imaginary: 2.0,
+            real: 23.0 / 13.0,
+            imaginary: - 2.0 / 13.0,
         };
         assert_approx_eq!(actual.real, expected.real, delta);
         assert_approx_eq!(actual.imaginary, expected.imaginary, delta);
