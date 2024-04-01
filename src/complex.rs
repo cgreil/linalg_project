@@ -1,13 +1,16 @@
-
+use num::traits::FloatConst;
 use num::Float;
 
 #[derive(Debug)]
-pub struct Complex<F: Float> {
+pub struct Complex<F: Float + FloatConst> {
     pub real: F,
     pub imaginary: F,
 }
 
-pub trait ComplexArithmetic {
+pub trait ComplexArithmetic
+where
+    Self: Sized,
+{
     fn norm(&self) -> Self;
 
     fn adjoint(&self) -> Self;
@@ -18,10 +21,10 @@ pub trait ComplexArithmetic {
 
     fn multiplication(&self, number: Self) -> Self;
 
-    fn division(&self, number: Self) -> Self;
+    fn division(&self, number: Self) -> Result<Self, &'static str>;
 }
 
-impl<F: Float> Complex<F> {
+impl<F: Float + FloatConst> Complex<F> {
     pub fn new(real: F, imaginary: F) -> Self {
         Complex {
             real: real,
@@ -36,10 +39,9 @@ impl<F: Float> Complex<F> {
     pub fn from_polar(norm: F, angle: F) {
         ()
     }
-
 }
 
-impl<F: Float> ComplexArithmetic for Complex<F> {
+impl<F: Float + FloatConst> ComplexArithmetic for Complex<F> {
     fn norm(&self) -> Complex<F> {
         Complex {
             real: F::sqrt(F::powi(self.real, 2) + F::powi(self.imaginary, 2)),
@@ -50,7 +52,7 @@ impl<F: Float> ComplexArithmetic for Complex<F> {
     fn adjoint(&self) -> Complex<F> {
         Complex {
             real: self.real,
-            imaginary: - self.imaginary,
+            imaginary: -self.imaginary,
         }
     }
 
@@ -75,15 +77,21 @@ impl<F: Float> ComplexArithmetic for Complex<F> {
         }
     }
 
-    fn division(&self, number: Complex<F>) -> Complex<F> {
+    fn division(&self, number: Complex<F>) -> Result<Complex<F>, &'static str> {
         let real_numerator = self.real * number.real + self.imaginary * number.imaginary;
         let complex_numerator = self.imaginary * number.real - self.real * number.imaginary;
 
-        let denominator = number.real * number.real + number.imaginary * number.imaginary;
+        let denominator: F = number.real * number.real + number.imaginary * number.imaginary;
 
-        Complex {
-            real: real_numerator / denominator,
-            imaginary: complex_numerator / denominator,
+        let zero = F::from(0.0).unwrap();
+        let delta = F::from(0.00001).unwrap();
+        if F::abs(denominator - zero) > delta {
+            Ok(Complex {
+                real: real_numerator / denominator,
+                imaginary: complex_numerator / denominator,
+            })
+        } else {
+            Err("Division by 0 cannot be done")
         }
     }
 }
@@ -94,11 +102,12 @@ mod tests {
 
     use super::*;
     use assert_approx_eq::assert_approx_eq;
+    use num::traits::FloatConst;
     use num::Float;
 
     const DELTA: f32 = 0.000001;
 
-    fn assert_complex<F: Float>(expected: Complex<F>, actual: Complex<F>)
+    fn assert_complex<F: Float + FloatConst>(expected: Complex<F>, actual: Complex<F>)
     where
         f32: From<F>,
     {
@@ -185,7 +194,7 @@ mod tests {
             real: 23.0 / 13.0,
             imaginary: -2.0 / 13.0,
         };
-        assert_complex(expected, actual);
+        assert_complex(expected, actual.unwrap());
     }
 
     #[test]
