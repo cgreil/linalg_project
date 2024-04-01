@@ -2,11 +2,11 @@ use crate::complex::*;
 
 #[derive(Debug)]
 struct Vector {
-    numbers: [Complex],
+    numbers: [Complex<f32>],
 }
 
 
-fn main() {
+pub fn show_vec () {
     let a = Complex {
         real: 2.0,
         imaginary: 3.0,
@@ -16,11 +16,8 @@ fn main() {
         imaginary: 8.0,
     };
 
-    let vec = Vector {
-        numbers: [a, b];
-    };
-    println!("Test is: {:?}", a);
-    println!("Vector is: {:?}", vec);
+    // println!("Test is: {:?}", a);
+    // println!("Vector is: {:?}", vec);
     println!("Test2");
 }
 

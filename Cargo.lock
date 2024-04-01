@@ -20,7 +20,6 @@ version = "0.1.0"
 dependencies = [
  "assert_approx_eq",
  "num",
- "vector",
 ]
 
 [[package]]
@@ -96,19 +95,4 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "da0df0e5185db44f69b44f26786fe401b6c293d1907744beaa7fa62b2e5a517a"
 dependencies = [
  "autocfg",
-]
-
-[[package]]
-name = "random"
-version = "0.14.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "61c7093a82705b48f10d4b165c6482dbe9f58cd63a870d85537e857b2badbd88"
-
-[[package]]
-name = "vector"
-version = "0.3.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "893f909a910c877f13bbf3c0c6831c77722d77c7bab3c7298a86a6862877f7f6"
-dependencies = [
- "random",
 ]
