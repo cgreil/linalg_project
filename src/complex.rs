@@ -8,17 +8,17 @@ pub struct Complex<F: Float> {
 }
 
 pub trait ComplexArithmetic {
-    fn norm(number: Self) -> Self;
+    fn norm(&self) -> Self;
 
-    fn adjoint(number: Self) -> Self;
+    fn adjoint(&self) -> Self;
 
-    fn addition(number1: Self, number2: Self) -> Self;
+    fn addition(&self, number: Self) -> Self;
 
-    fn subtraction(number1: Self, number2: Self) -> Self;
+    fn subtraction(&self, number: Self) -> Self;
 
-    fn multiplication(number1: Self, number2: Self) -> Self;
+    fn multiplication(&self, number: Self) -> Self;
 
-    fn division(number1: Self, number2: Self) -> Self;
+    fn division(&self, number: Self) -> Self;
 }
 
 impl<F: Float> Complex<F> {
@@ -29,60 +29,57 @@ impl<F: Float> Complex<F> {
         }
     }
 
-    pub fn calculate_angle(number: Self) -> F {
+    pub fn calculate_angle(self) -> F {
         F::from(42.0).unwrap()
-    }
-
-    pub fn calculate_norm(number: Self) -> F {
-        ComplexArithmetic::norm(number).real
     }
 
     pub fn from_polar(norm: F, angle: F) {
         ()
     }
+
 }
 
 impl<F: Float> ComplexArithmetic for Complex<F> {
-    fn norm(number: Complex<F>) -> Complex<F> {
+    fn norm(&self) -> Complex<F> {
         Complex {
-            real: F::sqrt(F::powi(number.real, 2) + F::powi(number.imaginary, 2)),
+            real: F::sqrt(F::powi(self.real, 2) + F::powi(self.imaginary, 2)),
             imaginary: F::from(0.0).unwrap(),
         }
     }
 
-    fn adjoint(number: Complex<F>) -> Complex<F> {
+    fn adjoint(&self) -> Complex<F> {
         Complex {
-            real: number.real,
-            imaginary: -number.imaginary,
+            real: self.real,
+            imaginary: - self.imaginary,
         }
     }
 
-    fn addition(number1: Complex<F>, number2: Complex<F>) -> Complex<F> {
+    fn addition(&self, number: Complex<F>) -> Complex<F> {
         Complex {
-            real: number1.real + number2.real,
-            imaginary: number1.imaginary + number2.imaginary,
+            real: self.real + number.real,
+            imaginary: self.imaginary + number.imaginary,
         }
     }
 
-    fn subtraction(number1: Complex<F>, number2: Complex<F>) -> Complex<F> {
+    fn subtraction(&self, number: Complex<F>) -> Complex<F> {
         Complex {
-            real: number1.real - number2.real,
-            imaginary: number1.imaginary - number2.imaginary,
+            real: self.real - number.real,
+            imaginary: self.imaginary - number.imaginary,
         }
     }
 
-    fn multiplication(number1: Complex<F>, number2: Complex<F>) -> Complex<F> {
+    fn multiplication(&self, number: Complex<F>) -> Complex<F> {
         Complex {
-            real: number1.real * number2.real - number1.imaginary * number2.imaginary,
-            imaginary: number1.real * number2.imaginary + number1.imaginary * number2.real,
+            real: self.real * number.real - self.imaginary * number.imaginary,
+            imaginary: self.real * number.imaginary + self.imaginary * number.real,
         }
     }
 
-    fn division(number1: Complex<F>, number2: Complex<F>) -> Complex<F> {
-        let real_numerator = number1.real * number2.real + number1.imaginary * number2.imaginary;
-        let complex_numerator = number1.imaginary * number2.real - number1.real * number2.imaginary;
+    fn division(&self, number: Complex<F>) -> Complex<F> {
+        let real_numerator = self.real * number.real + self.imaginary * number.imaginary;
+        let complex_numerator = self.imaginary * number.real - self.real * number.imaginary;
 
-        let denominator = number2.real * number2.real + number2.imaginary * number2.imaginary;
+        let denominator = number.real * number.real + number.imaginary * number.imaginary;
 
         Complex {
             real: real_numerator / denominator,
@@ -129,7 +126,7 @@ mod tests {
             real: -1.0,
             imaginary: 4.0,
         };
-        let actual = Complex::addition(test_num1, test_num2);
+        let actual = test_num1.addition(test_num2);
         let expected = Complex {
             real: 0.0,
             imaginary: 6.0,
@@ -147,7 +144,7 @@ mod tests {
             real: 5.0,
             imaginary: 9999.0,
         };
-        let actual = Complex::subtraction(test_num1, test_num2);
+        let actual = test_num1.subtraction(test_num2);
         let expected = Complex {
             real: -3.0,
             imaginary: -10002.0,
@@ -165,7 +162,7 @@ mod tests {
             real: 3.0,
             imaginary: 1.0,
         };
-        let actual = Complex::multiplication(test_num1, test_num2);
+        let actual = test_num1.multiplication(test_num2);
         let expected = Complex {
             real: 3.0,
             imaginary: 11.0,
@@ -183,7 +180,7 @@ mod tests {
             real: 2.0,
             imaginary: 3.0,
         };
-        let actual = Complex::division(test_num1, test_num2);
+        let actual = test_num1.division(test_num2);
         let expected = Complex {
             real: 23.0 / 13.0,
             imaginary: -2.0 / 13.0,
@@ -197,7 +194,7 @@ mod tests {
             real: 4.0,
             imaginary: -9.0,
         };
-        let actual = Complex::adjoint(test_num);
+        let actual = test_num.adjoint();
         let expected = Complex {
             real: 4.0,
             imaginary: 9.0,
@@ -211,7 +208,7 @@ mod tests {
             real: 4.0,
             imaginary: -5.0,
         };
-        let actual = Complex::norm(test_num);
+        let actual = test_num.norm();
         let expected = Complex {
             real: 6.4031242f32,
             imaginary: 0.0,
