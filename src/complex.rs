@@ -29,15 +29,15 @@ impl<F: Float> Complex<F> {
         }
     }
 
-    pub fn calculateAngle(number: Self) -> F {
+    pub fn calculate_angle(number: Self) -> F {
         F::from(42.0).unwrap()
     }
 
-    pub fn calculateNorm(number: Self) -> F {
+    pub fn calculate_norm(number: Self) -> F {
         ComplexArithmetic::norm(number).real
     }
 
-    pub fn fromPolar(Norm: F, angle: F) {
+    pub fn from_polar(norm: F, angle: F) {
         ()
     }
 }
@@ -99,7 +99,7 @@ mod tests {
     use assert_approx_eq::assert_approx_eq;
     use num::Float;
 
-    const delta: f32 = 0.000001;
+    const DELTA: f32 = 0.000001;
 
     fn assert_complex<F: Float>(expected: Complex<F>, actual: Complex<F>)
     where
@@ -110,8 +110,8 @@ mod tests {
         let actual_real = f32::from(actual.real);
         let actual_imaginary = f32::from(actual.imaginary);
 
-        assert_approx_eq!(expected_real, actual_real, delta);
-        assert_approx_eq!(expected_imaginary, actual_imaginary, delta);
+        assert_approx_eq!(expected_real, actual_real, DELTA);
+        assert_approx_eq!(expected_imaginary, actual_imaginary, DELTA);
     }
 
     #[test]
