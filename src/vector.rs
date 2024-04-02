@@ -99,7 +99,31 @@ impl Vector {
         Ok(())
     }
 
+    pub fn norm_l2(&self) -> f32 {
+        0.0
+    }
+
+    pub fn conjugate(&self) -> Self {
+        // compute the conjugate for the vector
+        //TODO
+        Vector::new()
+    }
+
+    pub fn adjoint(&self) -> Self {
+        // compute the adjoint, i.e. the conjugate transpose
+        // of the vector
+        //TODO
+        Vector::new()
+    }
+}
+
+impl Iterator for Vector {
     
+    type Item = Complex<f32>;
+
+    fn next(&mut self) -> Option<Self::Item> {
+        todo!()
+    }
 }
 
 
