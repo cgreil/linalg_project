@@ -26,7 +26,14 @@ where
 
 impl<F: Float + FloatConst> Complex<F> {
 
-    pub fn new(real: F, imaginary: F) -> Self {
+    pub fn new () -> Self {
+        Complex {
+            real: F::from(0.0).unwrap(),
+            imaginary: F::from(0.0).unwrap(),
+        }
+    }
+
+    pub fn from(real: F, imaginary: F) -> Self {
         Complex {
             real: real,
             imaginary: imaginary,
@@ -55,12 +62,19 @@ impl<F: Float + FloatConst> Complex<F> {
         self.norm().real
     }
 
+    pub fn scale(&self, factor: F) -> Self {
+        Complex {
+            real: self.real * factor,
+            imaginary: self.imaginary * factor,
+        }
+    }
+
 }
 
 impl <F: Float + FloatConst> Clone for Complex<F> {
 
     fn clone(&self) -> Self {
-        Complex::new(self.real, self.imaginary)
+        Complex::from(self.real, self.imaginary)
     }
 }
 
