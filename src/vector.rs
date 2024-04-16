@@ -1,3 +1,5 @@
+use std::path::Iter;
+
 use crate::complex::*;
 
 #[derive(Debug, PartialEq, Clone)]
@@ -6,7 +8,7 @@ enum VectorType {
     COLUMN_VECTOR,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 struct Vector {
     size: usize,
     vector_type: VectorType,
@@ -22,7 +24,15 @@ impl Vector {
         }
     }
 
-    pub fn from_array(arr: &[Complex<f32>]) -> Vector{
+    pub fn from(arr: &[Complex<f32>], vector_type: VectorType) -> Self {
+        Self {
+            size: arr.len(),
+            vector_type : vector_type,
+            numbers: Vec::from(arr)
+        }
+    }
+
+    pub fn from_array(arr: &[Complex<f32>]) -> Self {
         // the vector is only valid for the lifetime of the borrowed array
         Self {
             size: arr.len(),
@@ -103,28 +113,52 @@ impl Vector {
         0.0
     }
 
-    pub fn conjugate(&self) -> Self {
+    pub fn conjugate(&mut self) {
         // compute the conjugate for the vector
-        //TODO
-        Vector::new()
+        self.clone().into_iter().for_each(|mut x| x.conjugate());
     }
 
-    pub fn adjoint(&self) -> Self {
+    pub fn transpose(&mut self) {
+        self.vector_type = match self.vector_type {
+            VectorType::ROW_VECTOR => VectorType::COLUMN_VECTOR,
+            VectorType::COLUMN_VECTOR => VectorType::ROW_VECTOR,
+        };
+    }
+
+    pub fn adjoint(&mut self) {
         // compute the adjoint, i.e. the conjugate transpose
         // of the vector
-        //TODO
-        Vector::new()
+        self.transpose();
+        self.conjugate();
     }
+
+    
 }
 
+// consuming iterator definition for vector
+/*
+impl IntoIterator for Vector {
+
+    type Item = Complex<f32>;
+    type IntoIter = std::vec::IntoIter<Complex<f32>>;
+
+    fn into_iter(self) -> Self::IntoIter {
+        self.numbers.into_iter()
+    }
+}
+*/
+
+//nonconsuming iterator definition for vector
 impl Iterator for Vector {
-    
+
     type Item = Complex<f32>;
 
     fn next(&mut self) -> Option<Self::Item> {
-        todo!()
+        let value = self.numbers.iter().next()?;
+        return Some(value.clone());
     }
 }
+
 
 
 pub fn show_vec () {

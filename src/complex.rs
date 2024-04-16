@@ -13,7 +13,7 @@ where
 {
     fn norm(&self) -> Self;
 
-    fn adjoint(&self) -> Self;
+    fn conjugate(&mut self);
 
     fn addition(&self, number: &Self) -> Self;
 
@@ -86,11 +86,8 @@ impl<F: Float + FloatConst> ComplexArithmetic for Complex<F> {
         }
     }
 
-    fn adjoint(&self) -> Complex<F> {
-        Complex {
-            real: self.real,
-            imaginary: -self.imaginary,
-        }
+    fn conjugate(&mut self) {
+        self.imaginary = -self.imaginary;
     }
 
     fn addition(&self, number: &Complex<F>) -> Complex<F> {
@@ -235,12 +232,13 @@ mod tests {
     }
 
     #[test]
-    fn adjoint_test() {
-        let test_num = Complex {
+    fn conjugate_test() {
+        let mut test_num = Complex {
             real: 4.0,
             imaginary: -9.0,
         };
-        let actual = test_num.adjoint();
+        test_num.conjugate();
+        let actual = test_num.clone();
         let expected = Complex {
             real: 4.0,
             imaginary: 9.0,
