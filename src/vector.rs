@@ -1,5 +1,7 @@
 use std::path::Iter;
 
+use num::pow;
+
 use crate::complex::*;
 
 #[derive(Debug, PartialEq, Clone)]
@@ -110,7 +112,12 @@ impl Vector {
     }
 
     pub fn norm_l2(&self) -> f32 {
-        0.0
+        let mut sum: f32 = 0.0;
+        for i in 1..self.size {
+            let num = self.numbers.get(i).unwrap().clone();
+            sum = sum + f32::powi(num.norm(), 2);
+        }
+        f32::sqrt(sum)
     }
 
     pub fn conjugate(&mut self) {
@@ -135,19 +142,6 @@ impl Vector {
     
 }
 
-// consuming iterator definition for vector
-/*
-impl IntoIterator for Vector {
-
-    type Item = Complex<f32>;
-    type IntoIter = std::vec::IntoIter<Complex<f32>>;
-
-    fn into_iter(self) -> Self::IntoIter {
-        self.numbers.into_iter()
-    }
-}
-*/
-
 //nonconsuming iterator definition for vector
 impl Iterator for Vector {
 
@@ -158,7 +152,6 @@ impl Iterator for Vector {
         return Some(value.clone());
     }
 }
-
 
 
 pub fn show_vec () {
@@ -174,5 +167,8 @@ pub fn show_vec () {
     // println!("Test is: {:?}", a);
     // println!("Vector is: {:?}", vec);
     println!("Test2");
+    
+    let vec = Vector::from(&[a, b], VectorType::COLUMN_VECTOR);
+    println!("Testvector: {:?}", vec);
 }
 
