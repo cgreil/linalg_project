@@ -46,6 +46,10 @@ impl Vector {
         }
     }
 
+    pub fn get_type(&self) -> VectorType {
+        self.vector_type.clone()
+    }
+
     pub fn from_vec(vec: Vec<Complex<f32>>) -> Self {
         Self {
             size: vec.len(),
@@ -73,6 +77,11 @@ impl Vector {
             }
             Ok(result_vector)
         }
+    }
+
+    pub fn subtract(&self, other: &Self) -> Result<Self, &'static str> {
+        let negative_vec = other.scale(-1.0);
+        self.add(&negative_vec)
     }
 
     pub fn scale(&self, factor: f32) -> Self {
