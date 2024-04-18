@@ -1,17 +1,20 @@
 use std::path::Iter;
 
 use num::pow;
+use num::Float;
+use num::traits::FloatConst;
 
 use crate::complex::*;
 
 #[derive(Debug, PartialEq, Clone)]
-enum VectorType {
+pub enum VectorType {
     ROW_VECTOR,
     COLUMN_VECTOR,
 }
 
+
 #[derive(Debug, Clone)]
-struct Vector {
+pub struct Vector{
     size: usize,
     vector_type: VectorType,
     numbers: Vec<Complex<f32>>,
@@ -34,7 +37,7 @@ impl Vector {
         }
     }
 
-    pub fn from_array(arr: &[Complex<f32>]) -> Self {
+    pub fn from_array (arr: &[Complex<f32>]) -> Self {
         // the vector is only valid for the lifetime of the borrowed array
         Self {
             size: arr.len(),
@@ -122,7 +125,7 @@ impl Vector {
 
     pub fn conjugate(&mut self) {
         // compute the conjugate for the vector
-        self.clone().into_iter().for_each(|mut x| x.conjugate());
+        self.clone().iter().for_each(|mut x| x.conjugate());
     }
 
     pub fn transpose(&mut self) {
@@ -139,20 +142,35 @@ impl Vector {
         self.conjugate();
     }
 
+    pub fn iter(&self) -> VectorIterator {
+        VectorIterator {
+            vector: self,
+            index: 0,
+        }
+    }
+
     
 }
 
-//nonconsuming iterator definition for vector
-impl Iterator for Vector {
+pub struct VectorIterator<'a> {
+    vector: &'a Vector,
+    index: usize,
+}
 
+impl <'a> Iterator for VectorIterator<'a> {
     type Item = Complex<f32>;
 
     fn next(&mut self) -> Option<Self::Item> {
-        let value = self.numbers.iter().next()?;
-        return Some(value.clone());
+        if self.index < self.vector.size{
+            let value = self.vector.numbers.get(self.index).unwrap().clone();
+            let result = Some(value);
+            self.index += 1;
+            result
+        } else {
+            None
+        }
     }
 }
-
 
 pub fn show_vec () {
     let a = Complex {

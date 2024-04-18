@@ -6,7 +6,6 @@ mod tests {
     use crate::complex::*;
     use crate::test::util::*;
 
-
     #[test]
     fn sanity_test() {
         assert!(true);
