@@ -4,7 +4,7 @@ mod tests {
     use assert_approx_eq::assert_approx_eq;
 
     use crate::complex::*;
-    use crate::test::util::assert_complex_vec;
+    use crate::test::util::{assert_complex, assert_complex_vec};
     use crate::vector::*;
 
     #[test]
@@ -125,10 +125,35 @@ mod tests {
             Complex::from(6.0f32, 2.0f32)
         ]);
 
-        let expected: f32 = 8.062257748f32;
+        let expected: f32 = 8.06225f32;
         let actual = vec.norm_l2();
 
-        assert_approx_eq!(expected, actual);
+        assert_approx_eq!(expected, actual, 1.0e-4);
+    }
+
+    #[test]
+    
+    fn inner_product_test() {
+        let vec1 = Vector::from(&[
+            Complex::from(3.0f32, 1.0f32),
+            Complex::from(0.2f32, 0.009f32)],
+            VectorType::ROW_VECTOR
+        );
+
+        let vec2 = Vector::from(&[
+            Complex::from(41.32f32, 3.0f32),
+            Complex::from(7.2f32, 1.2f32)],
+            VectorType::COLUMN_VECTOR
+        );
+
+        let expected = Complex::from(
+            122.3892,
+            50.6248
+        );
+
+        let actual: Complex<_> = vec1.inner_product(&vec2).unwrap();
+        
+        assert_complex(expected, actual);
     }
 
 

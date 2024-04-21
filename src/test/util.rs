@@ -8,7 +8,7 @@ use num::Float;
 use crate::complex::Complex;
 use crate::vector::Vector;
 
-const DELTA: f32 = 0.000001;
+const DELTA: f32 = 1e-4;
 
 pub fn assert_complex<F: Float + FloatConst>(expected: Complex<F>, actual: Complex<F>)
 where

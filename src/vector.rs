@@ -1,10 +1,9 @@
-use std::path::Iter;
-
-use num::pow;
-use num::Float;
-use num::traits::FloatConst;
-
 use crate::complex::*;
+
+#[macro_export]
+macro_rules! floa {
+    
+}
 
 #[derive(Debug, PartialEq, Clone)]
 pub enum VectorType {
@@ -105,13 +104,13 @@ impl Vector {
             Err("Inner product can be done only between one row and one column vector \n")
         } 
         else {
-            let result: Complex<f32> = Complex::new();
+            let mut result: Complex<f32> = Complex::new();
             for i in 0..self.size {
                 let first_num = self.numbers.get(i).unwrap();
                 let second_num = other.numbers.get(i).unwrap();
                 let elem  = Complex::multiplication(first_num, second_num);
                 
-                result.addition(&elem);
+                result = result.addition(&elem);
             }
             Ok(result)
         }
@@ -125,7 +124,7 @@ impl Vector {
 
     pub fn norm_l2(&self) -> f32 {
         let mut sum: f32 = 0.0;
-        for i in 1..self.size {
+        for i in 0..self.size {
             let num = self.numbers.get(i).unwrap().clone();
             sum = sum + f32::powi(num.norm(), 2);
         }
@@ -134,7 +133,7 @@ impl Vector {
 
     pub fn conjugate(&mut self) {
         // compute the conjugate for the vector
-        self.clone().iter().for_each(|mut x| x.conjugate());
+        self.numbers.iter_mut().for_each(|x| x.conjugate());
     }
 
     pub fn transpose(&mut self) {
@@ -179,23 +178,5 @@ impl <'a> Iterator for VectorIterator<'a> {
             None
         }
     }
-}
-
-pub fn show_vec () {
-    let a = Complex {
-        real: 2.0,
-        imaginary: 3.0,
-    }; 
-    let b = Complex {
-        real: 3.0,
-        imaginary: 8.0,
-    };
-
-    // println!("Test is: {:?}", a);
-    // println!("Vector is: {:?}", vec);
-    println!("Test2");
-    
-    let vec = Vector::from(&[a, b], VectorType::COLUMN_VECTOR);
-    println!("Testvector: {:?}", vec);
 }
 
