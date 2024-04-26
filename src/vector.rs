@@ -9,7 +9,7 @@ macro_rules! vector{
 }
 pub(crate) use vector;
 
-type FloatType = f32;
+pub type FloatType = f32;
 
 
 #[derive(Debug, PartialEq, Clone)]
@@ -52,16 +52,30 @@ impl Vector {
         }
     }
 
-    pub fn get_type(&self) -> VectorType {
-        self.vector_type.clone()
-    }
-
     pub fn from_vec(vec: Vec<Complex<FloatType>>) -> Self {
         Self {
             size: vec.len(),
             vector_type: VectorType::COLUMN_VECTOR,
             numbers: vec.clone(),
         }
+    }
+
+    pub fn zeros(size: usize) -> Self {
+        let complex_vec: Vec<Complex<FloatType>> = (0..size).into_iter().map(|_| Complex::from(0.0f32 ,0.0f32)).collect();
+        Vector::from_vec(complex_vec)
+    }
+
+    pub fn ones(size: usize) -> Self {
+        let complex_vec: Vec<Complex<FloatType>> = (0..size).into_iter().map(|_| Complex::from(0.0f32, 0.0f32)).collect();
+        Vector::from_vec(complex_vec)
+    }
+
+    pub fn get_type(&self) -> VectorType {
+        self.vector_type.clone()
+    }
+
+    pub fn get_element(&self, index: usize) -> Option<&Complex<FloatType>> {
+        self.numbers.get(index)
     }
 
     pub fn add(&self, other: &Self) -> Result<Self, &'static str>  {
@@ -142,7 +156,7 @@ impl Vector {
         // compute the conjugate for the vector
         self.numbers.iter_mut().for_each(|x| x.conjugate());
     }
-
+            
     pub fn transpose(&mut self) {
         self.vector_type = match self.vector_type {
             VectorType::ROW_VECTOR => VectorType::COLUMN_VECTOR,
@@ -186,4 +200,5 @@ impl <'a> Iterator for VectorIterator<'a> {
         }
     }
 }
+
 
