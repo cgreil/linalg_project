@@ -132,7 +132,6 @@ mod tests {
     }
 
     #[test]
-    
     fn inner_product_test() {
         let vec1 = Vector::from(&[
             Complex::from(3.0f32, 1.0f32),
@@ -155,6 +154,21 @@ mod tests {
         
         assert_complex(expected, actual);
     }
+
+    #[test]
+    fn complex_vec_macro_test() {
+        let val1 = comp!(1.0f32, 2.0f32);
+        let val2 = comp!(4.0f32, 5.0f32);
+        let val3 = comp!(0.0f32, -7.0f32);
+
+        let complex_vector = [val1, val2, val3];
+
+        let actual = vector!(&complex_vector.clone());
+        let expected = Vector::from_array(&complex_vector.clone());
+
+        assert_complex_vec(expected, actual);
+    }
+
 
 
 }

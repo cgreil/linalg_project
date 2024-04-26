@@ -1,9 +1,16 @@
 use crate::complex::*;
 
 #[macro_export]
-macro_rules! floa {
-    
+// macro to create a complex vector element from an array of complex values
+macro_rules! vector{
+    ( $( $complex_num: expr),*) => {
+        Vector::from_array($( $complex_num)*)
+    }
 }
+pub(crate) use vector;
+
+type FloatType = f32;
+
 
 #[derive(Debug, PartialEq, Clone)]
 pub enum VectorType {
@@ -16,7 +23,7 @@ pub enum VectorType {
 pub struct Vector{
     size: usize,
     vector_type: VectorType,
-    numbers: Vec<Complex<f32>>,
+    numbers: Vec<Complex<FloatType>>,
 }
 
 impl Vector {
@@ -28,7 +35,7 @@ impl Vector {
         }
     }
 
-    pub fn from(arr: &[Complex<f32>], vector_type: VectorType) -> Self {
+    pub fn from(arr: &[Complex<FloatType>], vector_type: VectorType) -> Self {
         Self {
             size: arr.len(),
             vector_type : vector_type,
@@ -36,7 +43,7 @@ impl Vector {
         }
     }
 
-    pub fn from_array (arr: &[Complex<f32>]) -> Self {
+    pub fn from_array (arr: &[Complex<FloatType>]) -> Self {
         // the vector is only valid for the lifetime of the borrowed array
         Self {
             size: arr.len(),
@@ -49,7 +56,7 @@ impl Vector {
         self.vector_type.clone()
     }
 
-    pub fn from_vec(vec: Vec<Complex<f32>>) -> Self {
+    pub fn from_vec(vec: Vec<Complex<FloatType>>) -> Self {
         Self {
             size: vec.len(),
             vector_type: VectorType::COLUMN_VECTOR,
@@ -83,7 +90,7 @@ impl Vector {
         self.add(&negative_vec)
     }
 
-    pub fn scale(&self, factor: f32) -> Self {
+    pub fn scale(&self, factor: FloatType) -> Self {
 
         let scaled_values: Vec<_> = self.numbers
                                 .iter()
@@ -97,14 +104,14 @@ impl Vector {
         }
     }
 
-    pub fn inner_product(&self, other: &Self) -> Result<Complex<f32>, &'static str> {
+    pub fn inner_product(&self, other: &Self) -> Result<Complex<FloatType>, &'static str> {
 
         // inner product can only be done between a column and a row vector
         if self.vector_type == other.vector_type {
             Err("Inner product can be done only between one row and one column vector \n")
         } 
         else {
-            let mut result: Complex<f32> = Complex::new();
+            let mut result: Complex<FloatType> = Complex::new();
             for i in 0..self.size {
                 let first_num = self.numbers.get(i).unwrap();
                 let second_num = other.numbers.get(i).unwrap();
@@ -122,13 +129,13 @@ impl Vector {
         Ok(())
     }
 
-    pub fn norm_l2(&self) -> f32 {
-        let mut sum: f32 = 0.0;
+    pub fn norm_l2(&self) -> FloatType {
+        let mut sum: FloatType = 0.0;
         for i in 0..self.size {
             let num = self.numbers.get(i).unwrap().clone();
-            sum = sum + f32::powi(num.norm(), 2);
+            sum = sum + FloatType::powi(num.norm(), 2);
         }
-        f32::sqrt(sum)
+        FloatType::sqrt(sum)
     }
 
     pub fn conjugate(&mut self) {
@@ -166,7 +173,7 @@ pub struct VectorIterator<'a> {
 }
 
 impl <'a> Iterator for VectorIterator<'a> {
-    type Item = Complex<f32>;
+    type Item = Complex<FloatType>;
 
     fn next(&mut self) -> Option<Self::Item> {
         if self.index < self.vector.size{

@@ -7,5 +7,4 @@ use crate::vector::*;
 
 fn main() {
     println!("test");
-    show_vec();
 }

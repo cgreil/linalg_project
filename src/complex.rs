@@ -1,6 +1,17 @@
 use num::traits::FloatConst;
 use num::Float;
 
+
+#[macro_export]
+// macro to create complex numbers more succintly
+macro_rules! comp{
+    ($real: expr, $imaginary: expr) => {
+        Complex::from($real, $imaginary)
+    }
+}
+
+pub(crate) use comp;
+
 #[derive(Debug)]
 pub struct Complex<F: Float + FloatConst> {
     pub real: F,

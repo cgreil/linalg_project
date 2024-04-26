@@ -1,8 +1,8 @@
 // Unit test module for Complex type
 #[cfg(test)]
-
 mod tests {
 
+    #[macro_use]
     use crate::complex::*;
     use crate::test::util::*;
 
@@ -108,4 +108,13 @@ mod tests {
         let expected = 6.4031242f32;
         assert_approx_eq!(expected, actual);
     }
+
+
+    #[test]
+    fn complex_macro_test() {
+        let actual = comp!(3.0f32, 2.0f32);
+        let expected = Complex::from(3.0f32, 2.0f32);
+
+        assert_complex(expected, actual);
+    } 
 }
