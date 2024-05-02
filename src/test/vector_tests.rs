@@ -56,7 +56,7 @@ mod tests {
 
     #[test]
     fn vector_scale_test() {
-        let vec = Vector::from_array(&[
+        let mut vec = Vector::from_array(&[
             Complex::from(4.2f32, -3.1f32),
             Complex::from(2.9f32, 8.4f32),
             Complex::from(-4.0f32, 2.7f32),
@@ -68,8 +68,8 @@ mod tests {
             Complex::from(-8.0f32, 5.4f32),
         ]);
 
-        let actual = vec.scale(2.0);
-        assert_complex_vec(expected, actual);
+        vec.scale(2.0);
+        assert_complex_vec(expected, vec);
     }
 
     #[test]

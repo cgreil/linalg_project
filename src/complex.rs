@@ -67,11 +67,9 @@ impl<F: Float + FloatConst> Complex<F> {
         F::atan(self.imaginary / self.real)
     }
 
-    pub fn scale(&self, factor: F) -> Self {
-        Complex {
-            real: self.real * factor,
-            imaginary: self.imaginary * factor,
-        }
+    pub fn scale(&mut self, factor: F) {
+        self.real = factor * self.real;
+        self.imaginary = factor * self.imaginary;
     }
 
     pub fn norm(&self) -> F {

@@ -100,22 +100,13 @@ impl Vector {
     }
 
     pub fn subtract(&self, other: &Self) -> Result<Self, &'static str> {
-        let negative_vec = other.scale(-1.0);
-        self.add(&negative_vec)
+        let mut other_copy = other.clone();
+        other_copy.scale(-1.0);
+        self.add(&other_copy)
     }
 
-    pub fn scale(&self, factor: FloatType) -> Self {
-
-        let scaled_values: Vec<_> = self.numbers
-                                .iter()
-                                .map(|x| x.scale(factor))
-                                .collect();
-
-        Self { 
-            size: self.size, 
-            vector_type: self.vector_type.clone(), 
-            numbers: scaled_values 
-        }
+    pub fn scale(&mut self, factor: FloatType) {
+        self.numbers.iter_mut().for_each(|x| x.scale(factor));
     }
 
     pub fn inner_product(&self, other: &Self) -> Result<Complex<FloatType>, &'static str> {

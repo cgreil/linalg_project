@@ -106,19 +106,92 @@ impl Matrix {
         }
     }
 
-    pub fn transpose(&self) -> () {
+    pub fn transpose(&mut self) -> () {
+        // primitive transpose algorithm
+        let mut matrix_collector = Vec::new();
+        for row_index in 0..self.num_rows {
+            // iterate over column of non-transposed array to 
+            // create rows of transposed array
+            let mut transposed_row = Vec::new();
+            for column_index in 0..self.num_columns {
+                let element = self
+                    .get_element(row_index, column_index)
+                    .unwrap();
+                transposed_row.push(element);
+            }
+            let transposed_row = Vector::from_vec(transposed_row);
+            matrix_collector.push(transposed_row);
+        }
+
+        let temp_rows = self.num_rows;
+        self.num_rows = self.num_columns;
+        self.num_columns = temp_rows;
+        self.elements = matrix_collector;
+    }
+
+    pub fn conjugate(&mut self) -> () {
+        self.elements
+        .iter_mut()
+        .for_each(|x| x.conjugate());
+    }
+
+    pub fn adjoint(&mut self) -> () {
+        self.conjugate();
+        self.transpose();
+    }
+
+    pub fn multiply(&self, other: &Self) -> Result<Self, &'static str> {
+        // primitive matrix multiplication algorithm
+        // multiplying self as lhs and other as rhs
+        if self.num_columns != other.num_rows {
+            return Err("Number of columns of first matrix must match number
+            of rows of second matrix");
+        }
+        let mut matrix_collector = Vec::new();
+        for lhs_row_index in 0..self.num_rows {
+            let mut row_vector = Vec::new();
+            for rhs_col_index in 0..other.num_columns {
+                let mut matrix_element = Complex::from(0.0, 0.0);
+                for inner_iteration_index in 0..self.num_columns {
+                    let lhs_element = self
+                    .get_element(lhs_row_index, inner_iteration_index)
+                    .unwrap();
+                    let rhs_element = other
+                    .get_element(inner_iteration_index, rhs_col_index)
+                    .unwrap();
+
+                    let result = Complex::multiplication(&lhs_element, &rhs_element);
+                    matrix_element.addition(&result);
+                }
+                row_vector.push(matrix_element);
+            }
+            let matrix_row = Vector::from_vec(row_vector);
+            matrix_collector.push(matrix_row);
+        }
+        Ok(Matrix {
+            num_rows: self.num_rows,
+            num_columns: self.num_columns,
+            elements: matrix_collector
+        })
+    }
+
+    pub fn scale(&mut self, factor: FloatType) -> () {
+        self.elements.iter_mut().for_each(|vec| vec.scale(factor));
+    }
+
+    pub fn calculate_eigenvalues(&self) -> () {
 
     }
 
-    pub fn multiply(&self, other: &Self) -> () {
+    pub fn calculate_eigenvectors(&self) -> () {
 
     }
 
-    pub fn scale(&self, factor: FloatType) -> () {
+    pub fn kronecker_product(&self, other: &Self) -> () {
 
     }
 
-
+    
 
 
 
