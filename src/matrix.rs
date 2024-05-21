@@ -58,6 +58,10 @@ impl Matrix {
         }
     }
 
+    pub fn is_quadratic(&self) -> bool {
+        self.num_columns == self.num_rows
+    }
+
     pub fn get_element(
         &self,
         row_index: usize,
@@ -161,7 +165,7 @@ impl Matrix {
                     .unwrap();
 
                     let result = Complex::multiplication(&lhs_element, &rhs_element);
-                    matrix_element.addition(&result);
+                    matrix_element = matrix_element.addition(&result);
                 }
                 row_vector.push(matrix_element);
             }
@@ -179,15 +183,116 @@ impl Matrix {
         self.elements.iter_mut().for_each(|vec| vec.scale(factor));
     }
 
-    pub fn calculate_eigenvalues(&self) -> () {
+    pub fn calculate_eigenvalues(&self) -> Result<Complex<FloatType>, &'static str> {
+        // QR-Algorithm for eigenvalue calculation
+        let max_iterations = 100;
 
+        // only quadratic matrices can have eigenvalues
+        if !self.is_quadratic() {
+            return Err("Eigenvalues can only be calculated for quadratic matrices");
+        }
+
+
+
+
+
+        Ok(Complex::from(0.0, 0.0))
+        
     }
 
     pub fn calculate_eigenvectors(&self) -> () {
+        
+        // do QR- algorithm
 
+        // get upper triangular matrix from QR
+
+        // read diagonal elements as eigenvalues 
+
+        // return collection of eigenvalues  
     }
 
     pub fn kronecker_product(&self, other: &Self) -> () {
+        
+        // given two matrices self, other where
+        // self is m x n; other is p x q
+
+        // allocate result matrix with m*p x n*q
+
+        // for i in in result rows: 
+
+        // for j in result cols:
+
+        // result[i][j] = self[ceil(i/p)][ceil(j/q)] * other [((i-1) % p) + 1][((j-1) % q) + 1]
+
+        // return result matrix
+    }
+
+    pub fn QR_algorithm(&self) -> Self {
+
+        // for i in number columns
+
+        // define polynome p_i
+
+        // calculate p_i(A_i) = (A_i) (p_i)
+
+        // do QR-decomposition on (A_i) (p_i)
+
+        // calculate next iteratioon element: A_i+1 = Q_i^-1 A_i A_i
+
+        // assert that Matrix is close (up to epsilon) to upper diagonal matrix
+        // if yes, return Ok(matrix)
+        // if no, return None
+
+        Matrix::from(2, 2)
+    }
+
+    pub fn QR_decomposition(&self) -> Self {
+
+        // from columns of given matrix A
+
+        // form unitary (orthonormal) matrix Q with gram-schmidt-decomp
+
+        // use matrix solving to create upper triang matrix
+
+        // return Q
+
+        Matrix::from(1, 1)
+    }
+
+    // TODO: should be in another module later on
+    pub fn gram_schmidt_decomposition(vectors: Vec<Vector>) -> Vec<Vector> {
+        // TODO modify for numerical stability
+        let num_vectors = vectors.len();
+        
+        let mut normalized_vecs: Vec<Vector> = Vec::new();
+
+        let mut first_vec = vectors.get(0).unwrap().clone();
+        let first_normalized = first_vec.scale((1.0 / first_vec.norm_l2())); 
+
+        //let 
+        //let mut projection_vector = Vector::from_vec()
+        //let mut normalization_denom = 1.0;
+
+        // initialize collection of Projection matrices {P_ji}
+        // for each element in vector input set:
+
+        //take element from vectors set
+
+        // for each element already added to orthonormalset:
+        // calculate Projection P = |v_j><v_i| 
+        // add projection to collection
+        // subtract projection of new element onto that element
+        // 
+        // add up normalization denominator, i.e. inner l2 norm of old element
+        // end inner for loop
+
+        // add normalized element to set
+
+        // end of outer for loop
+
+        // return the vector set
+
+        Vec::new()
 
     }
 

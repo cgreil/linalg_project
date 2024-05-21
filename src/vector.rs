@@ -60,6 +60,7 @@ impl Vector {
         }
     }
 
+
     pub fn zeros(size: usize) -> Self {
         let complex_vec: Vec<Complex<FloatType>> = (0..size).into_iter().map(|_| Complex::from(0.0f32 ,0.0f32)).collect();
         Vector::from_vec(complex_vec)
