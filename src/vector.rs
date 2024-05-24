@@ -1,4 +1,5 @@
 use crate::complex::*;
+use crate::matrix::*;
 
 #[macro_export]
 // macro to create a complex vector element from an array of complex values
@@ -79,6 +80,14 @@ impl Vector {
         self.numbers.get(index)
     }
 
+    pub fn size(&self) -> usize {
+        self.size
+    }
+
+    pub fn normalize(&mut self) {
+        self.scale(1.0 / self.norm_l2());
+    }
+
     pub fn add(&self, other: &Self) -> Result<Self, &'static str>  {
         
         if self.vector_type != other.vector_type {
@@ -129,10 +138,22 @@ impl Vector {
         }
     }
 
-    pub fn outer_product(&self, other: &Self) -> Result<(), &'static str> {
+    pub fn outer_product(&self, other: &Self) -> Result<Matrix, &'static str> {
         
-        //TODO: implement outer product when matrix type is created 
-        Ok(())
+        let vector_size = self.size();
+        if vector_size != other.size() {
+            return Err("Dimension of vectors have to match for outer product");
+        }
+
+        let mut result = Matrix::from(vector_size, vector_size);
+        
+        for i in 0..vector_size {
+            for j in 0..vector_size {
+                let element = Complex::multiplication(self.get_element(i).unwrap(), other.get_element(j).unwrap());
+                result.set_element(i, j, element)?;
+            }
+        }
+        Ok(result)
     }
 
     pub fn norm_l2(&self) -> FloatType {

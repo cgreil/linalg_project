@@ -179,6 +179,21 @@ impl Matrix {
         })
     }
 
+    pub fn multiply_vector(&self, vector: &Vector) -> Result<Vector, &'static str> {
+
+        if self.num_columns != vector.size() {
+            return Err("Matrix dimension does not match vector dimension");
+        }
+
+        let mut vector_collector: Vec<Complex<FloatType>> = Vec::new();
+
+        self.elements
+            .iter()
+            .for_each(|vec| vector_collector.push(vec.inner_product(vector).unwrap()));
+
+        Ok(Vector::from_vec(vector_collector))
+    }
+
     pub fn scale(&mut self, factor: FloatType) -> () {
         self.elements.iter_mut().for_each(|vec| vec.scale(factor));
     }
@@ -260,44 +275,32 @@ impl Matrix {
     }
 
     // TODO: should be in another module later on
-    pub fn gram_schmidt_decomposition(vectors: Vec<Vector>) -> Vec<Vector> {
+    pub fn gram_schmidt_decomposition(vectors: Vec<Vector>) -> Result<Vec<Vector>, &'static str> {
         // TODO modify for numerical stability
         let num_vectors = vectors.len();
         
         let mut normalized_vecs: Vec<Vector> = Vec::new();
-
-        let mut first_vec = vectors.get(0).unwrap().clone();
-        let first_normalized = first_vec.scale((1.0 / first_vec.norm_l2())); 
-
-        //let 
-        //let mut projection_vector = Vector::from_vec()
-        //let mut normalization_denom = 1.0;
-
-        // initialize collection of Projection matrices {P_ji}
+        
         // for each element in vector input set:
+        for vector in vectors {
+                  
+            let mut projections_sum = Vector::zeros(vector.size());
 
-        //take element from vectors set
+            // for each element already added to orthonormalset:
+            for normed_vec in &normalized_vecs {
+                let projection_matrix = normed_vec.outer_product(&normed_vec).unwrap();
+                let projected_vector = projection_matrix.multiply_vector(&vector)?;
+                projections_sum = Vector::add(&projections_sum, &projected_vector)?;
+            }
 
-        // for each element already added to orthonormalset:
-        // calculate Projection P = |v_j><v_i| 
-        // add projection to collection
-        // subtract projection of new element onto that element
-        // 
-        // add up normalization denominator, i.e. inner l2 norm of old element
-        // end inner for loop
-
-        // add normalized element to set
-
-        // end of outer for loop
-
-        // return the vector set
-
-        Vec::new()
+            let mut orthogonal_vector = vector.subtract(&projections_sum)?;
+            orthogonal_vector.normalize();
+            normalized_vecs.push(orthogonal_vector);
+        }
+        
+        Ok(normalized_vecs)
 
     }
-
-    
-
 
 
 }
