@@ -1,6 +1,9 @@
 use crate::complex::*;
 use crate::vector::*;
 
+
+type ComplexNum = Complex<FloatType>;
+
 /**
  * Structure for a matrix of Complex numbers
  * For now implemented as a collection of vectors
@@ -33,7 +36,7 @@ impl Matrix {
     pub fn from_array(
         num_rows: usize,
         num_cols: usize,
-        arr: &[Complex<FloatType>],
+        arr: &[ComplexNum],
     ) -> Result<Self, &'static str> {
         let total_elements = num_rows * num_cols;
         if arr.len() != total_elements {
@@ -66,7 +69,7 @@ impl Matrix {
         &self,
         row_index: usize,
         col_index: usize,
-    ) -> Result<Complex<FloatType>, &'static str> {
+    ) -> Result<ComplexNum, &'static str> {
         if row_index > self.num_rows || col_index > self.num_columns {
             Err("Supplied indices cannot be outside of matrix boundaries")
         } else {
@@ -77,10 +80,10 @@ impl Matrix {
     }
 
     pub fn set_element(
-        &self,
+        &mut self,
         row_index: usize,
         col_index: usize,
-        element: Complex<FloatType>
+        element: ComplexNum
     ) -> Result<(), &'static str> {
         if row_index > self.num_rows || col_index > self.num_columns {
             Err("Supplied indices cannot be outside of matrix boundaries")
@@ -95,7 +98,7 @@ impl Matrix {
         if self.num_rows != other.num_rows || self.num_columns != other.num_columns {
             None
         } else {
-            let result = Matrix::from(self.num_rows, self.num_columns);
+            let mut result = Matrix::from(self.num_rows, self.num_columns);
             for row_index in 0..self.num_rows {
                 for col_index in 0..self.num_columns {
                     let num1 = self.get_element(row_index, col_index).unwrap();
@@ -185,7 +188,7 @@ impl Matrix {
             return Err("Matrix dimension does not match vector dimension");
         }
 
-        let mut vector_collector: Vec<Complex<FloatType>> = Vec::new();
+        let mut vector_collector: Vec<ComplexNum> = Vec::new();
 
         self.elements
             .iter()
@@ -198,7 +201,46 @@ impl Matrix {
         self.elements.iter_mut().for_each(|vec| vec.scale(factor));
     }
 
-    pub fn calculate_eigenvalues(&self) -> Result<Complex<FloatType>, &'static str> {
+    pub fn kronecker_product(&self, other: &Self) -> Result<Self, &'static str> {
+        
+        // given two matrices self, other where
+        // self has dimension m x n; other has dimension p x q
+        let row_dimension = self.num_rows * other.num_rows;
+        let column_dimension = self.num_columns * other.num_columns;
+
+        if row_dimension == 0 || column_dimension == 0 {
+            return Err("Matrix dimensions may not be 0");
+        }
+
+        let mut result = Matrix::from(row_dimension, column_dimension);
+
+        for i in 0..row_dimension {
+
+            for j in 0..column_dimension {
+
+                // kronecker product definition:
+                // result[i][j] = self[ceil(i/p)][ceil(j/q)] * other [((i-1) % p) + 1][((j-1) % q) + 1]
+                // avoid casting to and from float using different form of ceiling function:
+                // https://stackoverflow.com/questions/17944/how-to-round-up-the-result-of-integer-division
+                let lhs_row = ((i+1) / other.num_rows) + 1;
+                let lhs_col = ((j+1) / other.num_columns) + 1;
+
+                let rhs_row = ((i-1 ) % other.num_rows) + 1;
+                let rhs_col = ((j-1) % other.num_columns) + 1;
+
+                let lhs = self.get_element(lhs_row, lhs_col)?;
+                let rhs = other.get_element(rhs_row, rhs_col)?;
+
+                let element = Complex::multiplication(&lhs, &rhs);
+                result.set_element(i, j, element)?;
+            }
+
+        }
+        Ok(result)
+
+    }
+
+    pub fn calculate_eigenvalues(&self) -> Result<Vec<ComplexNum>, &'static str> {
         // QR-Algorithm for eigenvalue calculation
         let max_iterations = 100;
 
@@ -211,7 +253,7 @@ impl Matrix {
 
 
 
-        Ok(Complex::from(0.0, 0.0))
+        Ok(vec![Complex::from(0.0, 0.0)])
         
     }
 
@@ -224,22 +266,6 @@ impl Matrix {
         // read diagonal elements as eigenvalues 
 
         // return collection of eigenvalues  
-    }
-
-    pub fn kronecker_product(&self, other: &Self) -> () {
-        
-        // given two matrices self, other where
-        // self is m x n; other is p x q
-
-        // allocate result matrix with m*p x n*q
-
-        // for i in in result rows: 
-
-        // for j in result cols:
-
-        // result[i][j] = self[ceil(i/p)][ceil(j/q)] * other [((i-1) % p) + 1][((j-1) % q) + 1]
-
-        // return result matrix
     }
 
     pub fn QR_algorithm(&self) -> Self {
@@ -303,4 +329,7 @@ impl Matrix {
     }
 
 
+    
+
 }
+
