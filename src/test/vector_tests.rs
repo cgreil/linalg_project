@@ -33,6 +33,13 @@ mod tests {
     }
 
     #[test]
+    fn vector_set_element_test() {
+        let mut vec = Vector::from_array(&[comp!(2.0, 3.0), comp!(3.0, 7.0), comp!(2.3, 8.3)]);
+        assert_eq!(Ok(()), vec.set_element(2, comp!(9.0, 7.0)));
+        assert_complex(comp!(9.0, 7.0), vec.get_element(2).unwrap().clone());
+    }
+
+    #[test]
     fn vector_sub_test() {
 
         let vec1 = Vector::from_array(&[

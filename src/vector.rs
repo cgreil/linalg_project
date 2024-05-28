@@ -80,6 +80,15 @@ impl Vector {
         self.numbers.get(index)
     }
 
+    pub fn set_element(&mut self, index: usize, element: Complex<FloatType>) -> Result<(), &'static str> {
+        if index > self.size() {
+            Err("Trying to replace value outside of vector bounds")
+        } else{ 
+            self.numbers[index] = element;
+            Ok(())
+        }
+    }
+
     pub fn size(&self) -> usize {
         self.size
     }
@@ -145,7 +154,7 @@ impl Vector {
             return Err("Dimension of vectors have to match for outer product");
         }
 
-        let mut result = Matrix::from(vector_size, vector_size);
+        let mut result = Matrix::zeros(vector_size, vector_size);
         
         for i in 0..vector_size {
             for j in 0..vector_size {

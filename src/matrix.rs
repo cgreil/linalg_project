@@ -14,13 +14,13 @@ type ComplexNum = Complex<FloatType>;
  * => number of rows = amount of contained vectors
  */
 pub struct Matrix {
-    num_rows: usize,
-    num_columns: usize,
+    pub num_rows: usize,
+    pub num_columns: usize,
     elements: Vec<Vector>,
 }
 
 impl Matrix {
-    pub fn from(num_rows: usize, num_cols: usize) -> Self {
+    pub fn zeros(num_rows: usize, num_cols: usize) -> Self {
         let mut elements: Vec<Vector> = Vec::new();
         for i in 0..num_rows {
             let complex_vec = Vector::zeros(num_cols);
@@ -48,7 +48,7 @@ impl Matrix {
                 // index of first element in row
                 let start_index = i * num_cols;
                 // index of last element in row
-                let end_index = (i + 1) * num_cols - 1;
+                let end_index = (i + 1) * num_cols;
                 let array_slice = &arr[start_index..end_index];
                 let row_vector = Vector::from_array(array_slice);
                 elements.push(row_vector);
@@ -88,9 +88,8 @@ impl Matrix {
         if row_index > self.num_rows || col_index > self.num_columns {
             Err("Supplied indices cannot be outside of matrix boundaries")
         } else {
-            let row = self.elements.get(row_index).unwrap();
-            row.get_element(col_index).replace(&element);
-            Ok(())
+            let row = self.elements.get_mut(row_index).unwrap();
+            row.set_element(col_index, element)
         }
     }
 
@@ -98,7 +97,7 @@ impl Matrix {
         if self.num_rows != other.num_rows || self.num_columns != other.num_columns {
             None
         } else {
-            let mut result = Matrix::from(self.num_rows, self.num_columns);
+            let mut result = Matrix::zeros(self.num_rows, self.num_columns);
             for row_index in 0..self.num_rows {
                 for col_index in 0..self.num_columns {
                     let num1 = self.get_element(row_index, col_index).unwrap();
@@ -212,7 +211,7 @@ impl Matrix {
             return Err("Matrix dimensions may not be 0");
         }
 
-        let mut result = Matrix::from(row_dimension, column_dimension);
+        let mut result = Matrix::zeros(row_dimension, column_dimension);
 
         for i in 0..row_dimension {
 
@@ -284,7 +283,7 @@ impl Matrix {
         // if yes, return Ok(matrix)
         // if no, return None
 
-        Matrix::from(2, 2)
+        Matrix::zeros(2, 2)
     }
 
     pub fn QR_decomposition(&self) -> Self {
@@ -297,7 +296,7 @@ impl Matrix {
 
         // return Q
 
-        Matrix::from(1, 1)
+        Matrix::zeros(1, 1)
     }
 
     // TODO: should be in another module later on
