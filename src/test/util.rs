@@ -36,7 +36,7 @@ pub fn assert_complex_vec(expected: Vector, actual: Vector) {
     );
 }
 
-pub fn assert_matrix_test(expected: Matrix, actual: Matrix) {
+pub fn assert_complex_matrix(expected: Matrix, actual: Matrix) {
     
     for row_index in 0..expected.num_rows {
         for column_index in 0..expected.num_columns {

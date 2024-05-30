@@ -12,16 +12,14 @@ pub(crate) use vector;
 
 pub type FloatType = f32;
 
-
 #[derive(Debug, PartialEq, Clone)]
 pub enum VectorType {
     ROW_VECTOR,
     COLUMN_VECTOR,
 }
 
-
 #[derive(Debug, Clone)]
-pub struct Vector{
+pub struct Vector {
     size: usize,
     vector_type: VectorType,
     numbers: Vec<Complex<FloatType>>,
@@ -39,12 +37,12 @@ impl Vector {
     pub fn from(arr: &[Complex<FloatType>], vector_type: VectorType) -> Self {
         Self {
             size: arr.len(),
-            vector_type : vector_type,
-            numbers: Vec::from(arr)
+            vector_type: vector_type,
+            numbers: Vec::from(arr),
         }
     }
 
-    pub fn from_array (arr: &[Complex<FloatType>]) -> Self {
+    pub fn from_array(arr: &[Complex<FloatType>]) -> Self {
         // the vector is only valid for the lifetime of the borrowed array
         Self {
             size: arr.len(),
@@ -61,14 +59,19 @@ impl Vector {
         }
     }
 
-
     pub fn zeros(size: usize) -> Self {
-        let complex_vec: Vec<Complex<FloatType>> = (0..size).into_iter().map(|_| Complex::from(0.0f32 ,0.0f32)).collect();
+        let complex_vec: Vec<Complex<FloatType>> = (0..size)
+            .into_iter()
+            .map(|_| Complex::from(0.0f32, 0.0f32))
+            .collect();
         Vector::from_vec(complex_vec)
     }
 
     pub fn ones(size: usize) -> Self {
-        let complex_vec: Vec<Complex<FloatType>> = (0..size).into_iter().map(|_| Complex::from(0.0f32, 0.0f32)).collect();
+        let complex_vec: Vec<Complex<FloatType>> = (0..size)
+            .into_iter()
+            .map(|_| Complex::from(0.0f32, 0.0f32))
+            .collect();
         Vector::from_vec(complex_vec)
     }
 
@@ -80,10 +83,14 @@ impl Vector {
         self.numbers.get(index)
     }
 
-    pub fn set_element(&mut self, index: usize, element: Complex<FloatType>) -> Result<(), &'static str> {
+    pub fn set_element(
+        &mut self,
+        index: usize,
+        element: Complex<FloatType>,
+    ) -> Result<(), &'static str> {
         if index > self.size() {
             Err("Trying to replace value outside of vector bounds")
-        } else{ 
+        } else {
             self.numbers[index] = element;
             Ok(())
         }
@@ -97,21 +104,18 @@ impl Vector {
         self.scale(1.0 / self.norm_l2());
     }
 
-    pub fn add(&self, other: &Self) -> Result<Self, &'static str>  {
-        
+    pub fn add(&self, other: &Self) -> Result<Self, &'static str> {
         if self.vector_type != other.vector_type {
             Err("Adding vectors of differing types is not possible \n")
-        } 
-        else if self.size != other.size {
+        } else if self.size != other.size {
             Err("Adding vectors of differing types is not possible \n")
-        }    
-        else {
+        } else {
             let mut result_vector = Vector::new();
-            for i in 0..self.size  {
+            for i in 0..self.size {
                 let first_num = self.numbers.get(i).unwrap();
                 let second_num = other.numbers.get(i).unwrap();
                 let elem = Complex::addition(first_num, second_num);
-                
+
                 result_vector.numbers.insert(i, elem);
             }
             Ok(result_vector)
@@ -129,36 +133,31 @@ impl Vector {
     }
 
     pub fn inner_product(&self, other: &Self) -> Result<Complex<FloatType>, &'static str> {
+        let mut result: Complex<FloatType> = Complex::new();
+        for i in 0..self.size {
+            let first_num = self.numbers.get(i).unwrap();
+            let second_num = other.numbers.get(i).unwrap();
+            let elem = Complex::multiplication(first_num, second_num);
 
-        // inner product can only be done between a column and a row vector
-        if self.vector_type == other.vector_type {
-            Err("Inner product can be done only between one row and one column vector \n")
-        } 
-        else {
-            let mut result: Complex<FloatType> = Complex::new();
-            for i in 0..self.size {
-                let first_num = self.numbers.get(i).unwrap();
-                let second_num = other.numbers.get(i).unwrap();
-                let elem  = Complex::multiplication(first_num, second_num);
-                
-                result = result.addition(&elem);
-            }
-            Ok(result)
+            result = result.addition(&elem);
         }
+        Ok(result)
     }
 
     pub fn outer_product(&self, other: &Self) -> Result<Matrix, &'static str> {
-        
         let vector_size = self.size();
         if vector_size != other.size() {
             return Err("Dimension of vectors have to match for outer product");
         }
 
         let mut result = Matrix::zeros(vector_size, vector_size);
-        
+
         for i in 0..vector_size {
             for j in 0..vector_size {
-                let element = Complex::multiplication(self.get_element(i).unwrap(), other.get_element(j).unwrap());
+                let element = Complex::multiplication(
+                    self.get_element(i).unwrap(),
+                    other.get_element(j).unwrap(),
+                );
                 result.set_element(i, j, element)?;
             }
         }
@@ -178,7 +177,7 @@ impl Vector {
         // compute the conjugate for the vector
         self.numbers.iter_mut().for_each(|x| x.conjugate());
     }
-            
+
     pub fn transpose(&mut self) {
         self.vector_type = match self.vector_type {
             VectorType::ROW_VECTOR => VectorType::COLUMN_VECTOR,
@@ -199,8 +198,6 @@ impl Vector {
             index: 0,
         }
     }
-
-    
 }
 
 pub struct VectorIterator<'a> {
@@ -208,11 +205,11 @@ pub struct VectorIterator<'a> {
     index: usize,
 }
 
-impl <'a> Iterator for VectorIterator<'a> {
+impl<'a> Iterator for VectorIterator<'a> {
     type Item = Complex<FloatType>;
 
     fn next(&mut self) -> Option<Self::Item> {
-        if self.index < self.vector.size{
+        if self.index < self.vector.size {
             let value = self.vector.numbers.get(self.index).unwrap().clone();
             let result = Some(value);
             self.index += 1;
@@ -222,5 +219,3 @@ impl <'a> Iterator for VectorIterator<'a> {
         }
     }
 }
-
-

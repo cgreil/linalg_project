@@ -103,7 +103,7 @@ impl Matrix {
                     let num1 = self.get_element(row_index, col_index).unwrap();
                     let num2 = other.get_element(row_index, col_index).unwrap();
                     let number = num1.addition(&num2);
-                    if let Ok(_) = result.set_element(row_index, col_index, number)  {
+                    if let Err(_) = result.set_element(row_index, col_index, number)  {
                         return None;
                     } 
                 }
